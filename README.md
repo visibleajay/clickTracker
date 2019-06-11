@@ -1,15 +1,15 @@
 # clickTracker
 ClickTracker is a Firefox Extension which can be used to track all the clicks performed in a browser during a session.
 
-I got the inspiration for this project from human performing the timetravelling. I am joking.
+I got the inspiration for this project from timetravelling humans. I am joking.
 
-While working I always felt that with steps (to reach to a specific app state), if I could provide a screenshot containing all the buttons on which I had clicked to reach to a specific state than that would be surely helpful in having a better and efficient communication.
+While working with my previous company (With Remote Location), I always felt that with steps (to reach to a specific app state), if I could provide a screenshot containing all the buttons on which I had clicked to reach to a specific state than that would be surely helpful in having a better and efficient communication.
 
 ClickTracker does the same.
 
-1) You perform few clicks inside your web app.
+1) User performs few clicks inside the web app.
 2) Click Tracker records all of them.
-3) You click over any element in clickTracker.
+3) User click over any element in clickTracker.
 4) Click Tracker assigns the same color to web app element as it has assigned to the element in web extension.
 
 
