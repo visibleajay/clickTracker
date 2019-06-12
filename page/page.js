@@ -6,6 +6,7 @@
     backScript.then(  (page) => {
 
         const rootElement  = createRootElement();
+        addResetBtn(rootElement, page.bgScript);
         addElementsToPage(rootElement, page.bgScript.elementList());
     }, err => {
         console.log("Error  ", err);
@@ -23,6 +24,49 @@
         rootElement.style.background     =   "transparent";
         return rootElement;
     }
+
+
+    // Add reset btn to rootElement as first element.
+    // Use bgScript to clear the element List on reset btn click.
+    // Only clear the list when elementList is non-null.
+    function addResetBtn(rootElement, bgScript) {
+        let resetBtn     =   document.createElement("button");
+        resetBtn.textContent    =   "Reset";
+        resetBtn.style.position =   "absolute";
+        resetBtn.style.top      =   "20px";
+        resetBtn.style.left     =   "300px";
+        resetBtn.style.border   =   "none";
+        resetBtn.style.padding  =   "10px 15px";
+        resetBtn.style.cursor   =   "pointer";
+        resetBtn.style.backgroundColor  =   "#e4e4e4";
+        resetBtn.addEventListener("mouseenter", (event) => {
+            if ( bgScript.elementList().length > 0 ) {
+                event.target.style.backgroundColor   =   "#c3c3c3";
+            } else {
+                event.target.style.cursor   =   "default";
+            }
+        });
+        resetBtn.addEventListener("mouseleave", (event) => {
+            // Set to default state on mouse leave.
+            event.target.style.backgroundColor  =   "#e4e4e4";
+            event.target.style.cursor   =   "pointer";
+        });
+        resetBtn.addEventListener("click", () => {
+            if ( bgScript.elementList().length > 0 ) {
+                bgScript.clear();
+                clearPage( rootElement );
+            }
+        });
+        rootElement.appendChild(resetBtn);
+    }
+
+    // Remove all elements from page template except Clear btn.
+    function clearPage( rootElement ) {
+        while ( rootElement.firstElementChild.nextElementSibling ) {
+            rootElement.removeChild(rootElement.firstElementChild.nextElementSibling );
+        }
+    }
+
 
     // Add elements from elementList to rootElement.
     function addElementsToPage(rootElement, elementList) {

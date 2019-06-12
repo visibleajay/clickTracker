@@ -21,6 +21,10 @@ var bgScript = (function() {
     }
           
     return {
-        "elementList": getElementList
+        "elementList": getElementList,
+        "clear": () => {
+            // Clear the stored element list.
+            elementList = [];
+        }
     }
 })();
