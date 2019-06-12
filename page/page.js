@@ -5,51 +5,54 @@
 
     backScript.then(  (page) => {
 
-        var elementList =  page.bgScript.elementList();
+        const rootElement  = createRootElement();
+        addElementsToPage(rootElement, page.bgScript.elementList());
+    }, err => {
+        console.log("Error  ", err);
+    });
 
-        const parentDiv  = document.body;
-        parentDiv.style.display   = "flex";
-        parentDiv.style.flexDirection  =   "column";
-        parentDiv.style.width          =   "400px";
-        parentDiv.style.height         =   "300px";
-        parentDiv.style.margin         =   "20px";
-        parentDiv.style.overflowY      =   "scroll";
-        parentDiv.style.background     =   "transparent";
+    // Assign default style to rootElement.
+    function createRootElement() {
+        const rootElement           =   document.getElementById("root");
+        rootElement.style.display   =   "flex";
+        rootElement.style.flexDirection  =   "column";
+        rootElement.style.width          =   "400px";
+        rootElement.style.height         =   "300px";
+        rootElement.style.margin         =   "20px";
+        rootElement.style.overflowY      =   "scroll";
+        rootElement.style.background     =   "transparent";
+        return rootElement;
+    }
+
+    // Add elements from elementList to rootElement.
+    function addElementsToPage(rootElement, elementList) {
 
         let isFirst =   true; 
 
+        // Parse elementList and put each element as children to rootElement.
         for ( let index in elementList ) {
             
             const prop      =   elementList[index];
             let btnElement  =   getBtnElement(prop);
 
-            let clickedElementWidth    =   parseFloat(btnElement.firstElementChild.style.width);
-            let clickedElementHeight   =   parseFloat(btnElement.firstElementChild.style.height);
-            
-            let permissibleElementWidth    =   150;
-            let permissibleElementHeight   =   50;
-            
-            let hoverBtnWidth          =   150;
-            let hoverBtnHeight         =   50;
-
-            let [left, top] = isFirst ? [20, 20] : computeTopLeft(parentDiv.lastElementChild, btnElement.firstElementChild);
+            let [left, top] = isFirst ? [20, 40] : computeTopLeft(rootElement.lastElementChild, btnElement.firstElementChild);
             btnElement.style.position    =  "absolute";
             btnElement.style.top        =  top+"px";
             btnElement.style.left       =  left+"px";
             btnElement.addEventListener("click", function ($event){
                 computeQuerySelector($event, index);
             });
-            parentDiv.appendChild(btnElement);
+            rootElement.appendChild(btnElement);
+
             if ( prop.hasOwnProperty("bgColor") ) {
                 addBgColorToBtn(btnElement.firstElementChild, prop["bgColor"]);
             }
             isFirst         =   false;
         }
-    }, err => {
-        console.log("Error  ", err);
-    });
+    }
 
-
+    // Pass selected element reference and color to content script 
+    // for coloring the same color in opened web app.
     function computeQuerySelector($event, queryCounter) {
 
         const randomColor = getRandomColor();
@@ -79,9 +82,11 @@
                 });
     }
 
+    // Add Background Color to clicked element in page template.
     function addBgColorToBtn( element, randomColor ) {
         let btnElement = element;
-        while (btnElement.parentElement.nodeName.toLowerCase() != "body" ) {
+        const rootElementId = "root";
+        while (btnElement.parentElement.id.toLowerCase() != rootElementId ) {
             btnElement.style.background    =   randomColor;
             btnElement   =   btnElement.parentElement;
         }
@@ -89,6 +94,7 @@
         return btnElement
     }
 
+    // Create a new btn with passed prop obj.
     function getBtnElement( prop ) {
         let element        = prop["target"];
         let cssList        = JSON.parse(prop["css"]);
@@ -102,6 +108,7 @@
         return btnElement;
     }
 
+    // Compute absolute position of current element wrt previous element.
     function computeTopLeft( previousElement, currentElement ) {
 
         let previousElementOffset = previousElement.getBoundingClientRect();
@@ -114,6 +121,7 @@
         return [parentLeft, parentTop];
     }
 
+    // Fetch random color in HEX format.
     function getRandomColor() {
         let letters      =  "0123456789ABCDEF";
         let color        =  "#";
